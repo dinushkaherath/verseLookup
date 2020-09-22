@@ -28,7 +28,7 @@ export default {
 
 <style scoped>
 .row {
-  margin: 17px 10px;
+  margin: 0px 10px;
 }
 .chapter {
   font-size: 20px;
