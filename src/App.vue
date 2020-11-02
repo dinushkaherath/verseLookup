@@ -1,107 +1,112 @@
 <template>
   <div id="app">
-    <div class="tabs">
-      <div v-if="tabs" class="tab">Select Verses</div>
-      <div v-if="!tabs" @click="reset()">
-        <img src="@/ic_chevron_right_48px.svg" alt />
-      </div>
-      <div v-if="verseBar" class="bar">Selected Verses</div>
-    </div>
-    <form v-if="tabs" id="app" @submit.prevent="submitVerseList">
-      <p>Example: Matt. 1; Matthew 2:4; Matt. 5:18-20; Psa. 145-146; Psalm 140:12-141:9</p>
-      <p>
-        <label for="verseList">Enter Verses:</label>
-        <input v-model="verseList" type="text" name="verseList" />
-      </p>
-      <p>
-        <input type="submit" value="Submit" />
-      </p>
-    </form>
-    <Verses v-if="!tabs" :verseList="verse" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!--isVisible variable ensures that either the BibleBook or the Plan components will be visible at a time-->
+    <button
+      class="buttontab"
+      style="left:0"  
+      v-on:click="show = 'Bible';scrollTop()" 
+      v-show="$store.state.mainView">
+    
+      Bible
+     
+    </button>
+
+    <button 
+      class="buttontab" 
+      style="left:33.4%"  
+      v-on:click="show = 'Plan';readToday()" 
+      v-show="$store.state.mainView">
+      Reading Plan
+    </button>   
+
+    <button 
+      class="buttontab" 
+      style="right:0"  
+      v-on:click="show = 'Lookup'" 
+      v-show="$store.state.mainView">
+      Lookup-Verses
+    </button>
+
+
+      <!--Use v-show instead of v-if for faster rendering-->
+      <div v-show="show=='Bible'"><BibleBook/><VerseView/></div>
+      <div v-show="show=='Plan'"><Plan ref="plan-ref"/><VerseView/></div>
+      <div v-show="show=='Lookup'"><Lookup/><VerseView/></div>
+    
   </div>
 </template>
 
 <script>
-import Verses from "@/components/Verses.vue";
+import BibleBook from './components/BibleBook.vue'
+import Plan from './components/Plan.vue'
+import Lookup from './components/Lookup.vue'
+import VerseView from './components/VerseView.vue'
 export default {
-  name: "App",
-  components: {
-    Verses
+  name: 'App',
+  data:function(){
+    return{
+    show: 'Lookup'
+    }
   },
-  data: () => {
-    return {
-      tabs: true,
-      verseBar: false,
-      verse: "Isaiah 24:21-25:12"
-    };
+  components: {
+   BibleBook,
+   Plan,
+   Lookup,
+   VerseView,
   },
   methods: {
-    submitVerseList() {
-      this.verse = this.verseList;
-      this.tabs = false;
-      this.verseBar = true;
+    scrollTop() {
+      window.scrollTo(0,0);
     },
-    reset() {
-      this.tabs = true;
-      this.verseBar = false;
+    readToday() {
+        var element = this.$refs["plan-ref"].$refs["day-ref-"+this.$store.state.today];
+        this.$nextTick(function () {
+          var top = element[0].offsetTop;
+          window.scrollTo({
+            top: top,
+            behavior: 'smooth'
+          });
+        })
     }
   }
-};
+}
+
 </script>
 
 <style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  font-family: "Lora", "Georgia", "Times New Roman", serif;
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
 }
-body {
-  margin: 0;
-  position: relative;
-  top: 52px;
-  background-color: rgb(246, 246, 246);
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
 }
-.tabs {
+
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+div {
+  top:52px;
+}
+.buttontab{
   position: fixed;
-  background-color: #0b1b27;
-  display: flex;
-  left: 0;
-  top: 0;
-  z-index: 99;
-  width: 100%;
+  top:0;
+  z-index: 100;
+  width:33%;
+  color: white;
+  height: 50px;
+  background-color: #4F5378 !important;
+  border-style:solid !important;
+  border-width: thin !important;
+  outline: none;
 }
 
-.tab {
-  color: #26ffd4;
-  font-size: 1.2rem;
-  font-weight: bold;
-  justify-content: center;
-  padding: 15px;
-  width: 100%;
-  display: flex;
-}
-.bar {
-  position: relative;
-  color: #26ffd4;
-  font-size: 1.2rem;
-  font-weight: bold;
-  padding: 15px;
-  justify-content: center;
-  width: 100%;
-  display: flex;
-}
-form {
-  align-items: center;
-}
-</style>
-
-<style scoped>
-img {
-  width: 30px;
-  height: 30px;
-  margin: 10px;
-  transform: translateY(0%) rotate(180deg);
-  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(10deg) brightness(104%)
-    contrast(102%);
-}
 </style>
