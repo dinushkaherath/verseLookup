@@ -95,28 +95,37 @@ export default new Vuex.Store({
   // async Break verse list sections by book & chapter then getVerses()
   // "Matt. 1; Matthew 2:4; Matt. 5:18-20; Psa. 145-146; Psalm 140:12-141:9"
   async getVerseList({dispatch, state}, verseString){
+    
+    var bookName = 'John' // Default John
 
-    // Split into sectons: [Matt. 1, ..., Psalm 140:12-141:9]
-    var verseList = verseString.replace(/; /g, ";").split(';');
+    // Split into sectons: [Matt. 1, ..., Psalm 140:12-141:9] and remove spaces before & after ";" also switch commas to ;*
+    var verseList = verseString.replace(/ ; /g, ";").replace(/; /g, ";").replace(/\./g, "").replace(/ , /g, ";*").replace(/, /g, ";*").split(';');
 
+    // Loop through preVerseList and add missing booknames (1 Pet. 2:5, 9;)
     // Loop through verseList
     for (var i = 0; i < verseList.length; i++) {
 
       // Split by space between bookname and section
       var str = verseList[i]
-      var bookName = str.substr(0, str.lastIndexOf(" "))
+      var bookString = str.substr(0, str.lastIndexOf(" "))
       var section = str.substr(str.lastIndexOf(" ") + 1, str.length);
       
       // Replace any abbreviations
-      bookName = bookName.replace(/\./g, "")
-      if (bookName == 'Psalm') {
+      if (bookString == 'Psalm') {
         bookName = 'Psalms'
       }
       state.books.forEach(book => {
-        if (bookName == book.abbrev) {
+        if (bookString == book.abbrev) {
           bookName = book.name
+        } else if (bookString == book.name) {
+          bookName = bookString
         }
       });
+
+      // If section has a * replace with chapter number and ":"
+      if (section.includes('*')) {
+        section = section.replace(/\*/g, chapterNum+":")
+      }
 
       // Check if colons and dashes in section
       var countDash =  (section.match(/-/g)||[]).length;
@@ -196,7 +205,10 @@ export default new Vuex.Store({
       var title = bookName + " "+chapterNum
     }
     else {
-      title = bookName + " "+chapterNum+":"+start+"-"+end
+      title = bookName + " "+chapterNum+":"+start
+      if (end != start) {
+        title += "-"+end
+      }
     }
 
     //Try catch block to log and capture errors
