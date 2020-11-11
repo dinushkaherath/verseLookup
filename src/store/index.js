@@ -98,26 +98,29 @@ export default new Vuex.Store({
     
     var bookName = 'John' // Default John
 
-    // Split into sectons: [Matt. 1, ..., Psalm 140:12-141:9] and remove spaces before & after ";" also switch commas to ;*
-    var verseList = verseString.replace(/ ; /g, ";").replace(/; /g, ";").replace(/\./g, "").replace(/ , /g, ";*").replace(/, /g, ";*").split(';');
+    // Split into sectons: [Matt. 1, ..., Psalm 140:12-141:9] and remove spaces & switch commas to ;* & lowercase everything
+    var verseList = verseString.replace(/ /g, "").replace(/;/g, ";").replace(/\./g, "").replace(/,/g, ";*").toLowerCase().split(';');
 
-    // Loop through preVerseList and add missing booknames (1 Pet. 2:5, 9;)
     // Loop through verseList
     for (var i = 0; i < verseList.length; i++) {
 
-      // Split by space between bookname and section
+      // Split by first non alphabetic character into bookstring and section
       var str = verseList[i]
-      var bookString = str.substr(0, str.lastIndexOf(" "))
-      var section = str.substr(str.lastIndexOf(" ") + 1, str.length);
+      var splitIndex = str.substring(1).search(/[^A-Za-z]/) + 1
+      if (splitIndex == 1) {
+        splitIndex = 0
+      }
+      var bookString = str.substr(0, splitIndex)
+      var section = str.substr(splitIndex, str.length);
       
       // Replace any abbreviations
       if (bookString == 'Psalm') {
         bookName = 'Psalms'
       }
       state.books.forEach(book => {
-        if (bookString == book.abbrev) {
+        if (bookString == book.abbrev.replace(/ /g, "").toLowerCase()) {
           bookName = book.name
-        } else if (bookString == book.name) {
+        } else if (bookString == book.name.replace(/ /g, "").toLowerCase()) {
           bookName = bookString
         }
       });
