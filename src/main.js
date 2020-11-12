@@ -12,7 +12,7 @@ Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.prototype.$http = axios;
 Vue.use(VueTouch);
-Vue.use(VueGtag, {config: {id: 'G-ZWYBT137M3'}});
+Vue.use(VueGtag, {config: {id: 'UA-177240655-6'}});
 new Vue({
   store: store,
   render: (h) => h(App),
