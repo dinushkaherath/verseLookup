@@ -8,7 +8,7 @@
     <button
       class="buttontab"
       style="left:0"  
-      v-on:click="show = 'Bible';scrollTop()" 
+      v-on:click="show = true;scrollTop()" 
       v-show="$store.state.mainView">
     
       Bible
@@ -17,25 +17,20 @@
 
     <button 
       class="buttontab" 
-      style="left:33.4%"  
-      v-on:click="show = 'Plan';readToday()" 
+      v-on:click="show = false;readToday()" 
       v-show="$store.state.mainView">
       Reading Plan
-    </button>   
-
-    <button 
-      class="buttontab" 
-      style="right:0"  
-      v-on:click="show = 'Lookup'" 
-      v-show="$store.state.mainView">
-      Lookup-Verses
     </button>
 
+    <!-- <transition name="fade"> -->
 
       <!--Use v-show instead of v-if for faster rendering-->
-      <div v-show="show=='Bible'"><BibleBook/><VerseView/></div>
-      <div v-show="show=='Plan'"><Plan ref="plan-ref"/><VerseView/></div>
-      <div v-show="show=='Lookup'"><Lookup/><VerseView/></div>
+      <div v-show="show"><BibleBook/><VerseView/></div>
+    <!-- </transition> -->
+
+    <!-- <transition name="fade"> -->
+      <div v-show="!show"><Plan ref="plan-ref"/><VerseView/></div>
+    <!-- </transition> -->
     
   </div>
 </template>
@@ -43,19 +38,17 @@
 <script>
 import BibleBook from './components/BibleBook.vue'
 import Plan from './components/Plan.vue'
-import Lookup from './components/Lookup.vue'
 import VerseView from './components/VerseView.vue'
 export default {
   name: 'App',
   data:function(){
     return{
-    show: 'Lookup'
+    show: true
     }
   },
   components: {
    BibleBook,
    Plan,
-   Lookup,
    VerseView,
   },
   methods: {
@@ -100,7 +93,7 @@ div {
   position: fixed;
   top:0;
   z-index: 100;
-  width:33%;
+  width:50%;
   color: white;
   height: 50px;
   background-color: #4F5378 !important;
