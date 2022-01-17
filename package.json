@@ -11,7 +11,7 @@
   "homepage": "https://dinushkaherath.github.io/verseLookup",
   "dependencies": {
     "@vue/cli-service": "^4.5.13",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "bootstrap-vue": "^2.16.0",
     "core-js": "^3.6.5",
     "gh-pages": "^2.2.0",
